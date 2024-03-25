@@ -1,0 +1,44 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap");
+body {
+  font-family: "DM Sans", sans-serif;
+}
+
+option {
+  color: black;
+}
+
+.input-field input:focus {
+  background: var(--chakra-colors-transparent);
+  border-color: #3965ff;
+}
+.input-field {
+  width: 100%;
+}
+.input-field input {
+  width: 100%;
+  height: var(--input-height);
+  font-size: var(--input-font-size);
+  -webkit-padding-start: var(--input-padding);
+  padding-inline-start: var(--input-padding);
+  -webkit-padding-end: var(--input-padding);
+  padding-inline-end: var(--input-padding);
+  border-radius: 8px;
+  min-width: 0px;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  position: relative;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
+  transition-property: var(--chakra-transition-property-common);
+  transition-duration: var(--chakra-transition-duration-normal);
+  font-weight: 400;
+  --input-font-size: var(--chakra-fontSizes-md);
+  --input-padding: var(--chakra-space-4);
+  --input-border-radius: var(--chakra-radii-md);
+  --input-height: var(--chakra-sizes-10);
+  border: 2px solid;
+  border-color: var(--chakra-colors-transparent);
+  background: var(--chakra-colors-gray-100);
+}

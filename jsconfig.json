@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "jsx": "react",
+    "checkJs": false,
+    "paths": {
+      "@/components/*": ["src/components/*"],
+      "@/data-access/*": ["src/data-access/*"],
+      "@/redux/*": ["src/redux/*"],
+      "@/pages/*": ["src/pages/*"],
+      "@/layouts/*": ["src/layouts/*"],
+      "@/constants/*": ["src/constants/*"],
+      "@/assets/*": ["src/assets/*"],
+      "@/images/*": ["src/assets/images/*"],
+      "@/svg/*": ["src/assets/svg/*"],
+      "@/videos/*": ["src/assets/videos/*"],
+      "@/config/*": ["src/config/*"],
+      "@/utils/*": ["src/utils/*"],
+      "@/service/*": ["src/service/*"],
+      "@/hooks/*": ["src/hooks/*"],
+      "@/pack/*": ["src/pack/*"],
+      "@/src/*": ["src/*"]
+    }
+  },
+  "exclude": ["node_modules"]
+}
