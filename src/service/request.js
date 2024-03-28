@@ -49,7 +49,7 @@ export const Method = {
 };
 export const getApiUrl = (origin) => {
   // const url = store.getState().application.HOST;
-  const domain = "http://14.225.205.222:2300";
+  const domain = "http://14.225.205.222:8800";
 
   return domain + "/api/ivirse/v1" + (origin ? "" : "/app");
 };
