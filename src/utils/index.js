@@ -1,4 +1,3 @@
-import { ethers } from "ethers";
 import i18n from "i18next";
 import moment from "moment";
 
@@ -8,20 +7,6 @@ export const strings = (name, params = {}) => {
 
 export const isExpiredRequest = (req) => {
   return moment.unix(req.createdAt._hex).add(1, "day").isBefore(moment());
-};
-
-export const parseEther = (amount) => {
-  if (typeof amount === "number") {
-    amount = amount.toString();
-  }
-  return ethers.utils.parseEther(amount);
-};
-
-export const x10_18 = (value) => {
-  return ethers.utils.parseUnits(
-    typeof value == "string" ? value : value.toString(),
-    18
-  );
 };
 
 export const shortenTime = (totalSeconds) => {
