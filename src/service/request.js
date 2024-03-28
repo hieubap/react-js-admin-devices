@@ -12,11 +12,7 @@ const client = axios.create({
   // baseURL: `${HOST}`,
   // withCredentials: false,
 
-  headers: {
-    "Content-Type": "application/json",
-    "If-None-Match": "",
-    timezone_offset: new Date().getTimezoneOffset() / 60,
-  },
+  headers,
 });
 
 client.interceptors.request.use(async (config = {}) => {
@@ -53,9 +49,9 @@ export const Method = {
 };
 export const getApiUrl = (origin) => {
   // const url = store.getState().application.HOST;
-  const domain = "http://14.225.205.222:8800";
+  const domain = "http://14.225.205.222:2300";
 
-  return domain + (origin ? "" : "/devices");
+  return domain + "/api/ivirse/v1" + (origin ? "" : "/app");
 };
 
 export const getApiFile = () => {
@@ -66,7 +62,11 @@ export const convertFileUrl = (url) => {
   if (["https://", "http://", "file://"].some((i) => url.startsWith(i)))
     return url;
   return getApiUrl(true) + "/upload/public?path=" + url;
+  // return "https://datahub.ivirse.com/api";
 };
+// export const getPrefixFile = () => {
+//   return getApi;
+// };
 
 export const requestApi = async (url, data, method = Method.GET) => {
   try {
@@ -103,7 +103,7 @@ export const requestData = async (
         : [url, data, { headers }])
     );
 
-    if (response.code === 200 || response.code === 0) {
+    if (response.code === 200) {
       return response.data;
     } else {
       return Promise.reject(response.message);

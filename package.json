@@ -16,8 +16,6 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "@types/react-dom": "^18.2.19",
-    "@web3modal/react": "^2.7.1",
-    "@web3modal/wagmi": "^3.5.7",
     "apexcharts": "3.35.2",
     "axios": "^1.6.7",
     "babel-cli": "^6.26.0",
@@ -51,7 +49,7 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "PORT=3101 npx react-app-rewired start",
+    "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
