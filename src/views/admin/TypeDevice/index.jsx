@@ -18,22 +18,17 @@ import ConfirmDelete from "@/components/Modal/ConfirmDelete";
 import Pagination from "@/components/Pagination/Pagination";
 import TableView from "@/components/View/TableView";
 import useHookState from "@/hooks/useHookState";
-import deviceService from "@/service/device-service";
-import { formatPrice } from "@/utils/index";
-import { ExternalLinkIcon } from "@chakra-ui/icons";
+import deviceService from "@/service/type-device-service";
+import moment from "moment";
 import { MdAddCircleOutline, MdDelete, MdEdit } from "react-icons/md";
-import AssignModal from "./AssignModal";
 import DeviceForm from "./DeviceForm";
-import { SearchBar } from "@/components/navbar/searchBar/SearchBar";
-import useSearch from "@/hooks/useSearch";
-import { FaDropbox, FaStore } from "react-icons/fa";
 
-export default function ImportDevice() {
+export default function TypeDevice() {
   // Chakra Color Mode
   const toast = useToast();
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const { state, setState } = useHookState({
-    musicList: [],
+    typeList: [],
     page: 0,
     size: 10,
     totalElements: 0,
@@ -57,78 +52,31 @@ export default function ImportDevice() {
       ),
     },
     {
-      title: "Tên thiết bị",
-      dataIndex: "deviceName",
+      title: "Tên",
+      dataIndex: "typeName",
       width: 200,
     },
     {
-      title: "Mã thiết bị",
-      width: 90,
-      dataIndex: "deviceCode",
+      title: "Số lượng",
+      dataIndex: "numberDevice",
+      width: 200,
+    },
+
+    {
+      title: "Ngày sửa",
+      dataIndex: "updatedAt",
+      renderItem: (v) => (v ? moment(v).format("HH:mm DD/MM/YYYY") : ""),
     },
     {
-      title: "Loại sản phẩm",
-      dataIndex: "type",
-      renderItem: (v) => v?.typeName,
-    },
-    {
-      title: "Hãng sản xuất",
-      dataIndex: "manufacturer",
-    },
-    // {
-    //   title: "Màu sắc",
-    //   dataIndex: "color",
-    // },
-    {
-      title: "Kích thước",
-      width: 90,
-      dataIndex: "size",
-      renderItem: (v) => (v ? v + " (inch)" : ""),
-    },
-    // {
-    //   title: "Công nghệ",
-    //   width: 90,
-    //   dataIndex: "tech",
-    // },
-    {
-      title: "Giá nhập",
-      dataIndex: "priceBuy",
-      renderItem: (v) => formatPrice(v),
-    },
-    {
-      title: "Giá bán",
-      dataIndex: "priceSell",
-      renderItem: (v) => formatPrice(v),
+      title: "Ngày tạo",
+      dataIndex: "createdAt",
+      renderItem: (v) => (v ? moment(v).format("HH:mm DD/MM/YYYY") : ""),
     },
     {
       title: "",
       dataIndex: "",
       renderItem: (_, row) => (
         <ButtonGroup gap={0.1}>
-          <Tooltip label="Bán thiết bị" placement="top">
-            <span>
-              <FaStore
-                color="green"
-                size={20}
-                cursor={"pointer"}
-                onClick={() => {
-                  setState({ exportData: row, visibleExport: true });
-                }}
-              />
-            </span>
-          </Tooltip>
-          <Tooltip label="Chuyển kho linh kiện" placement="top">
-            <span>
-              <FaDropbox
-                color="orange"
-                size={20}
-                cursor={"pointer"}
-                onClick={() => {
-                  setState({ accessoryId: row._id, visibleAccessory: true });
-                }}
-              />
-            </span>
-          </Tooltip>
           <Tooltip label="Sửa" placement="top">
             <span>
               <MdEdit
@@ -158,13 +106,11 @@ export default function ImportDevice() {
     },
   ];
 
-  const fetchData = async (deviceName = "") => {
+  const fetchData = async () => {
     console.log(state, "state...");
     deviceService
       .search({
-        status: 1,
-        // allTag: true,
-        deviceName,
+        allTag: true,
         page: state.page,
         size: state.size,
       })
@@ -172,7 +118,7 @@ export default function ImportDevice() {
       .then((res) => {
         console.log(res, "data???");
         setState({
-          musicList: res.data,
+          typeList: res.data,
           page: res.page - 0,
           size: res.size - 0,
           totalElements: res.totalElements,
@@ -194,10 +140,6 @@ export default function ImportDevice() {
     });
   };
 
-  const { onSearch, textSearch } = useSearch({
-    refreshData: fetchData,
-  });
-
   return (
     <>
       <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
@@ -214,13 +156,8 @@ export default function ImportDevice() {
               fontWeight="700"
               lineHeight="100%"
             >
-              Danh sách thiết bị hiện có
+              Loại thiết bị
             </Text>
-            <SearchBar
-              style={{ marginLeft: 20 }}
-              placeholder="Tìm theo tên"
-              onChange={onSearch}
-            />
             <Spacer />
             <HStack>
               <Button
@@ -231,12 +168,12 @@ export default function ImportDevice() {
                 variant="brand"
                 pr="15px"
               >
-                Thiết bị mới
+                Thêm mới
               </Button>
               <Menu />
             </HStack>
           </Flex>
-          <TableView columns={columns} data={state.musicList} />
+          <TableView columns={columns} data={state.typeList} />
           <Pagination
             currentPage={state.page + 1}
             size={state.size}
@@ -252,14 +189,6 @@ export default function ImportDevice() {
             setState({ visibleForm: false });
           }}
         />
-        <AssignModal
-          data={state.exportData}
-          visible={state.visibleExport}
-          onRefresh={fetchData}
-          onClose={() => {
-            setState({ visibleExport: false });
-          }}
-        />
         <ConfirmDelete
           visible={state.confirmDelete}
           onSubmit={() => {
@@ -269,21 +198,6 @@ export default function ImportDevice() {
           }}
           onClose={() => {
             setState({ confirmDelete: false });
-          }}
-        />
-        <ConfirmDelete
-          visible={state.visibleAccessory}
-          // title="Ch"
-          content="Linh kiện sẽ được chuyển vào kho làm linh kiện thay thế sửa chữa. Thiết bị này sẽ được hiển thị trong linh kiện sửa chữa"
-          onSubmit={() => {
-            deviceService
-              .update({ _id: state.accessoryId, status: 5 })
-              .then((res) => {
-                fetchData(textSearch);
-              });
-          }}
-          onClose={() => {
-            setState({ visibleAccessory: false });
           }}
         />
       </Box>

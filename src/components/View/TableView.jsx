@@ -62,6 +62,7 @@ function TableView({
                       fontSize={{ sm: "14px" }}
                       minW={{ lg: "auto" }}
                       borderColor="transparent"
+                      style={{width: col.width}}
                     >
                       {col.renderItem
                         ? col.renderItem(item[col.dataIndex], item, rowNum)

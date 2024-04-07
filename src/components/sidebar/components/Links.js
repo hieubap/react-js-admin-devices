@@ -26,28 +26,7 @@ export function SidebarLinks(props) {
   // this function creates the links from the secondary accordions (for example auth -> sign-in -> default)
   const createLinks = (routes) => {
     return routes.map((route, index) => {
-      if (route.category) {
-        return (
-          <>
-            <Text
-              fontSize={"md"}
-              color={activeColor}
-              fontWeight="bold"
-              mx="auto"
-              ps={{
-                sm: "10px",
-                xl: "16px",
-              }}
-              pt="18px"
-              pb="12px"
-              key={index}
-            >
-              {route.name}
-            </Text>
-            {createLinks(route.items)}
-          </>
-        );
-      } else if (route.layout === "/admin") {
+      if (route.layout === "/admin") {
         return (
           <NavLink key={index} to={route.layout + route.path} replace>
             {route.icon ? (
@@ -57,7 +36,7 @@ export function SidebarLinks(props) {
                     activeRoute(route.path.toLowerCase()) ? "22px" : "26px"
                   }
                   py="5px"
-                  ps="10px"
+                  ps="8px"
                 >
                   <Flex w="100%" alignItems="center" justifyContent="center">
                     <Box
@@ -66,7 +45,7 @@ export function SidebarLinks(props) {
                           ? activeIcon
                           : textColor
                       }
-                      me="18px"
+                      me="8px"
                     >
                       {route.icon}
                     </Box>

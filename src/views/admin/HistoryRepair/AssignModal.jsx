@@ -68,7 +68,7 @@ export default function AssignModal({
   }, [data]);
 
   useEffect(() => {
-    fetchData();
+    // fetchData();
   }, []);
 
   const searchRef = useRef();

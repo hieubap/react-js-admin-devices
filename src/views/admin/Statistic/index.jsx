@@ -12,25 +12,25 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
 // import MusicForm from "./components/MusicForm";
 import Card from "@/components/card/Card";
-import Footer from "@/components/footer/FooterMusicPage";
 import ConfirmDelete from "@/components/Modal/ConfirmDelete";
 import Pagination from "@/components/Pagination/Pagination";
 import TableView from "@/components/View/TableView";
 import useHookState from "@/hooks/useHookState";
-import deviceService from "@/service/device-service";
+import deviceService from "@/service/type-device-service";
 import { formatPrice } from "@/utils/index";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { MdAddCircleOutline, MdDelete, MdEdit } from "react-icons/md";
-import AssignModal from "./AssignModal";
 import DeviceForm from "./DeviceForm";
+import moment from "moment";
 
-export default function AuditDevice() {
+export default function StatisticDevice() {
+  // Chakra Color Mode
+  const toast = useToast();
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const { state, setState } = useHookState({
-    musicList: [],
+    typeList: [],
     page: 0,
     size: 10,
     totalElements: 0,
@@ -54,43 +54,14 @@ export default function AuditDevice() {
       ),
     },
     {
-      title: "Tên thiết bị",
-      dataIndex: "deviceName",
+      title: "Tên",
+      dataIndex: "typeName",
       width: 200,
     },
     {
-      title: "Mã thiết bị",
-      width: 90,
-      dataIndex: "deviceCode",
-    },
-    {
-      title: "Hãng sản xuất",
-      dataIndex: "manufacturer",
-    },
-    {
-      title: "Màu sắc",
-      dataIndex: "color",
-    },
-    {
-      title: "Khối lượng",
-      dataIndex: "mass",
-      renderItem: (v) => (v ? v + " (kg)" : ""),
-    },
-    {
-      title: "Kích thước",
-      width: 90,
-      dataIndex: "size",
-      renderItem: (v) => (v ? v + " (inch)" : ""),
-    },
-    {
-      title: "Công nghệ",
-      width: 90,
-      dataIndex: "tech",
-    },
-    {
-      title: "Giá",
-      dataIndex: "price",
-      renderItem: (v) => formatPrice(v),
+      title: "Ngày tạo",
+      dataIndex: "createdAt",
+      renderItem: (v) => (v ? moment(v).format("HH:mm DD/MM/YYYY") : ""),
     },
     {
       title: "",
@@ -150,7 +121,7 @@ export default function AuditDevice() {
       .then((res) => {
         console.log(res, "data???");
         setState({
-          musicList: res.data,
+          typeList: res.data,
           page: res.page - 0,
           size: res.size - 0,
           totalElements: res.totalElements,
@@ -188,32 +159,30 @@ export default function AuditDevice() {
               fontWeight="700"
               lineHeight="100%"
             >
-              Nhập thiết bị
+              Loại thiết bị
             </Text>
             <Spacer />
-            {/* <HStack>
+            <HStack>
               <Button
                 onClick={() => {
-                  setState({ visibleForm: true, editData: null });
+                  setState({ visibleForm: true, editData: {} });
                 }}
                 leftIcon={<MdAddCircleOutline />}
                 variant="brand"
                 pr="15px"
               >
-                Thiết bị mới
+                Thêm mới
               </Button>
               <Menu />
-            </HStack> */}
+            </HStack>
           </Flex>
-          <Text textAlign={"center"}>Sắp ra mắt</Text>
-
-          {/* <TableView columns={columns} data={state.musicList} />
+          <TableView columns={columns} data={state.typeList} />
           <Pagination
             currentPage={state.page + 1}
             size={state.size}
             total={state.totalElements}
             onChangePage={onChangePage}
-          /> */}
+          />
         </Card>
         <DeviceForm
           data={state.editData}
@@ -221,14 +190,6 @@ export default function AuditDevice() {
           onRefresh={fetchData}
           onClose={() => {
             setState({ visibleForm: false });
-          }}
-        />
-        <AssignModal
-          data={state.exportData}
-          visible={state.visibleExport}
-          onRefresh={fetchData}
-          onClose={() => {
-            setState({ visibleExport: false });
           }}
         />
         <ConfirmDelete

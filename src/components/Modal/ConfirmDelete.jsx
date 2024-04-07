@@ -1,25 +1,20 @@
-import musicService from "@/service/device-service";
 import {
+  Button,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
-  useDisclosure,
-  Button,
-  FormControl,
-  FormLabel,
-  Input,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
 } from "@chakra-ui/react";
-import { Field, Formik } from "formik";
-import { useDispatch } from "react-redux";
 
 export default function ConfirmDelete({
   visible,
   onClose = () => {},
   onSubmit = () => {},
+  title = "Bạn chắc chứ ?",
+  content = "",
 }) {
   const handleSubmit = () => {
     onSubmit();
@@ -29,15 +24,15 @@ export default function ConfirmDelete({
     <Modal isOpen={visible} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Are you sure ?</ModalHeader>
+        <ModalHeader>{title}</ModalHeader>
         <ModalCloseButton />
-        {/* <ModalBody></ModalBody> */}
+        <ModalBody>{content}</ModalBody>
         <ModalFooter>
           <Button variant="ghost" mr={3} onClick={onClose}>
-            Close
+            Hủy
           </Button>
           <Button type="submit" form="add-music" onClick={handleSubmit}>
-            Delete
+            Đồng ý
           </Button>
         </ModalFooter>
       </ModalContent>

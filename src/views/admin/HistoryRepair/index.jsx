@@ -3,6 +3,7 @@ import {
   ButtonGroup,
   Flex,
   HStack,
+  Spacer,
   Text,
   Tooltip,
   useColorModeValue,
@@ -11,20 +12,21 @@ import React, { useEffect } from "react";
 // import MusicForm from "./components/MusicForm";
 import Card from "@/components/card/Card";
 import ConfirmDelete from "@/components/Modal/ConfirmDelete";
-import { SearchBar } from "@/components/navbar/searchBar/SearchBar";
 import Pagination from "@/components/Pagination/Pagination";
 import TableView from "@/components/View/TableView";
 import useHookState from "@/hooks/useHookState";
-import useSearch from "@/hooks/useSearch";
-import deviceService from "@/service/device-service";
+import auditDeviceService from "@/service/audit-device-service";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 import moment from "moment";
-import { GiBrokenPottery } from "react-icons/gi";
-import { MdEditDocument } from "react-icons/md";
-import DeviceForm from "./DeviceForm";
+import { MdDelete, MdEdit } from "react-icons/md";
+import AssignModal from "./AssignModal";
+import DeviceForm from "./RepairModel";
+import repairService from "@/service/repair-service";
 import { formatPrice } from "@/utils/index";
+import { IoMdEye } from "react-icons/io";
+import RepairModal from "./RepairModel";
 
-export default function ExportDevice() {
-  // Chakra Color Mode
+export default function HistoryRepair() {
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const { state, setState } = useHookState({
     musicList: [],
@@ -32,7 +34,6 @@ export default function ExportDevice() {
     size: 10,
     totalElements: 0,
   });
-
   const columns = [
     {
       title: "STT",
@@ -52,64 +53,63 @@ export default function ExportDevice() {
       ),
     },
     {
-      title: "Ngày bán",
-      dataIndex: "assignDate",
-      width: 100,
-      renderItem: (v) => (v ? moment(v).format("DD/MM/YYYY HH:mm:ss") : ""),
+      title: "Sửa lúc",
+      width: 120,
+      dataIndex: "createdAt",
+      renderItem: (v) => (v ? moment(v).format("HH:mm DD/MM/YYYY") : ""),
     },
     {
       title: "Tên thiết bị",
-      dataIndex: "deviceName",
-      width: 200,
+      dataIndex: "deviceInfo",
+      width: 150,
+      renderItem: (item) => item?.deviceName,
     },
     {
-      title: "Mã thiết bị",
+      title: "Mã",
       width: 90,
-      dataIndex: "deviceCode",
+      dataIndex: "deviceInfo",
+      renderItem: (item) => item?.deviceCode,
     },
     {
-      title: "Họ tên",
-      width: 90,
+      title: "Tên thợ",
+      width: 120,
       dataIndex: "fullname",
     },
     {
       title: "Số điện thoại",
+      width: 100,
       dataIndex: "phone",
     },
     {
-      title: "Địa chỉ",
-      dataIndex: "address",
+      title: "Số linh kiện thay thế",
+      width: 90,
+      dataIndex: "deviceReplaceIds",
+      renderItem: (item) => item?.length,
     },
     {
-      title: "Giá bán",
-      dataIndex: "priceSell",
-      renderItem: (v) => formatPrice(v),
+      title: "Công sửa",
+      width: 90,
+      dataIndex: "wage",
+      renderItem: (item) => formatPrice(item),
+    },
+    {
+      title: "Đánh giá",
+      dataIndex: "content",
     },
     {
       title: "",
       dataIndex: "",
+      width: 40,
       renderItem: (_, row) => (
         <ButtonGroup gap={0.1}>
-          <Tooltip label="Sửa" placement="top">
+          <Tooltip label="Xem" placement="top">
             <span>
-              <MdEditDocument
-                color="green"
+              <IoMdEye
+                color="#4e4eff"
                 size={20}
                 cursor={"pointer"}
                 onClick={() => {
-                  setState({ editData: row, visibleForm: true });
-                }}
-              />
-            </span>
-          </Tooltip>
-          <Tooltip label="Báo hỏng" placement="top">
-            <span>
-              <GiBrokenPottery
-                color="#ff5555"
-                size={20}
-                cursor={"pointer"}
-                onClick={() => {
-                  setState({ confirmBroken: true, brokenId: row._id });
+                  setState({ detailId: row._id, visibleForm: true });
                 }}
               />
             </span>
@@ -119,20 +119,20 @@ export default function ExportDevice() {
     },
   ];
 
-  const fetchData = async (deviceName, page) => {
-    deviceService
+  const fetchData = async () => {
+    console.log(state, "state...");
+    repairService
       .search({
-        status: 2,
-        page: page || state.page,
+        page: state.page,
         size: state.size,
-        deviceName,
       })
+
       .then((res) => {
         console.log(res, "data???");
         setState({
           musicList: res.data,
-          page: res.pageNumber - 0,
-          size: res.pageSize - 0,
+          page: res.page - 0,
+          size: res.size - 0,
           totalElements: res.totalElements,
         });
       })
@@ -146,14 +146,11 @@ export default function ExportDevice() {
   }, [state.page]);
 
   const onChangePage = (page) => {
+    console.log("onChange", page);
     setState({
       page: page - 1,
     });
   };
-
-  const { onSearch, textSearch } = useSearch({
-    refreshData: fetchData,
-  });
 
   return (
     <>
@@ -171,14 +168,12 @@ export default function ExportDevice() {
               fontWeight="700"
               lineHeight="100%"
             >
-              Danh sách thiết bị đã bán
+              Lịch sử sửa chữa thiết bị
             </Text>
-            <SearchBar
-              style={{ marginLeft: 20 }}
-              placeholder="Tìm theo tên"
-              onChange={onSearch}
-            />
+            <Spacer />
           </Flex>
+          {/* <Text textAlign={"center"}>Sắp ra mắt</Text> */}
+
           <TableView columns={columns} data={state.musicList} />
           <Pagination
             currentPage={state.page + 1}
@@ -187,25 +182,12 @@ export default function ExportDevice() {
             onChangePage={onChangePage}
           />
         </Card>
-        <DeviceForm
-          data={state.editData}
+        <RepairModal
+          id={state.detailId}
           visible={state.visibleForm}
-          onRefresh={() => fetchData(textSearch, 0)}
+          onRefresh={fetchData}
           onClose={() => {
-            setState({ visibleForm: false });
-          }}
-        />
-
-        <ConfirmDelete
-          visible={state.confirmBroken}
-          onSubmit={() => {
-            deviceService.broken(state.brokenId).then((res) => {
-              fetchData(textSearch, 0);
-            });
-          }}
-          content="Bạn có chắc báo hỏng thiết bị"
-          onClose={() => {
-            setState({ confirmBroken: false });
+            setState({ visibleForm: false, detailId: null });
           }}
         />
       </Box>

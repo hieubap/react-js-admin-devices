@@ -21,14 +21,20 @@ import useHookState from "@/hooks/useHookState";
 import deviceService from "@/service/device-service";
 import { formatPrice } from "@/utils/index";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { MdAddCircleOutline, MdDelete, MdEdit } from "react-icons/md";
-import AssignModal from "./AssignModal";
-import DeviceForm from "./DeviceForm";
-import { SearchBar } from "@/components/navbar/searchBar/SearchBar";
-import useSearch from "@/hooks/useSearch";
-import { FaDropbox, FaStore } from "react-icons/fa";
+import {
+  MdAddCircleOutline,
+  MdCarRepair,
+  MdDelete,
+  MdEdit,
+  MdRebaseEdit,
+  MdTireRepair,
+} from "react-icons/md";
+import { GiAutoRepair } from "react-icons/gi";
+import RepairForm from "./RepairForm";
+import { CgEditShadows, CgEditUnmask } from "react-icons/cg";
+import moment from "moment";
 
-export default function ImportDevice() {
+export default function RepairDevice() {
   // Chakra Color Mode
   const toast = useToast();
   const textColor = useColorModeValue("secondaryGray.900", "white");
@@ -67,17 +73,17 @@ export default function ImportDevice() {
       dataIndex: "deviceCode",
     },
     {
-      title: "Loại sản phẩm",
-      dataIndex: "type",
-      renderItem: (v) => v?.typeName,
-    },
-    {
       title: "Hãng sản xuất",
       dataIndex: "manufacturer",
     },
     // {
     //   title: "Màu sắc",
     //   dataIndex: "color",
+    // },
+    // {
+    //   title: "Khối lượng",
+    //   dataIndex: "mass",
+    //   renderItem: (v) => (v ? v + " (kg)" : ""),
     // },
     {
       title: "Kích thước",
@@ -92,12 +98,12 @@ export default function ImportDevice() {
     // },
     {
       title: "Giá nhập",
-      dataIndex: "priceBuy",
+      dataIndex: "price",
       renderItem: (v) => formatPrice(v),
     },
     {
       title: "Giá bán",
-      dataIndex: "priceSell",
+      dataIndex: "price",
       renderItem: (v) => formatPrice(v),
     },
     {
@@ -105,38 +111,14 @@ export default function ImportDevice() {
       dataIndex: "",
       renderItem: (_, row) => (
         <ButtonGroup gap={0.1}>
-          <Tooltip label="Bán thiết bị" placement="top">
+          <Tooltip label="Sửa chữa" placement="top">
             <span>
-              <FaStore
-                color="green"
-                size={20}
-                cursor={"pointer"}
-                onClick={() => {
-                  setState({ exportData: row, visibleExport: true });
-                }}
-              />
-            </span>
-          </Tooltip>
-          <Tooltip label="Chuyển kho linh kiện" placement="top">
-            <span>
-              <FaDropbox
-                color="orange"
-                size={20}
-                cursor={"pointer"}
-                onClick={() => {
-                  setState({ accessoryId: row._id, visibleAccessory: true });
-                }}
-              />
-            </span>
-          </Tooltip>
-          <Tooltip label="Sửa" placement="top">
-            <span>
-              <MdEdit
+              <GiAutoRepair
                 color="#4e4eff"
                 size={20}
                 cursor={"pointer"}
                 onClick={() => {
-                  setState({ editData: row, visibleForm: true });
+                  setState({ repairData: row, visibleRepair: true });
                 }}
               />
             </span>
@@ -158,13 +140,12 @@ export default function ImportDevice() {
     },
   ];
 
-  const fetchData = async (deviceName = "") => {
+  const fetchData = async () => {
     console.log(state, "state...");
     deviceService
       .search({
-        status: 1,
+        status: 3,
         // allTag: true,
-        deviceName,
         page: state.page,
         size: state.size,
       })
@@ -194,10 +175,6 @@ export default function ImportDevice() {
     });
   };
 
-  const { onSearch, textSearch } = useSearch({
-    refreshData: fetchData,
-  });
-
   return (
     <>
       <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
@@ -214,27 +191,9 @@ export default function ImportDevice() {
               fontWeight="700"
               lineHeight="100%"
             >
-              Danh sách thiết bị hiện có
+              Danh sách thiết bị báo sửa
             </Text>
-            <SearchBar
-              style={{ marginLeft: 20 }}
-              placeholder="Tìm theo tên"
-              onChange={onSearch}
-            />
             <Spacer />
-            <HStack>
-              <Button
-                onClick={() => {
-                  setState({ visibleForm: true, editData: {} });
-                }}
-                leftIcon={<MdAddCircleOutline />}
-                variant="brand"
-                pr="15px"
-              >
-                Thiết bị mới
-              </Button>
-              <Menu />
-            </HStack>
           </Flex>
           <TableView columns={columns} data={state.musicList} />
           <Pagination
@@ -244,20 +203,12 @@ export default function ImportDevice() {
             onChangePage={onChangePage}
           />
         </Card>
-        <DeviceForm
-          data={state.editData}
-          visible={state.visibleForm}
+        <RepairForm
+          data={state.repairData}
+          visible={state.visibleRepair}
           onRefresh={fetchData}
           onClose={() => {
-            setState({ visibleForm: false });
-          }}
-        />
-        <AssignModal
-          data={state.exportData}
-          visible={state.visibleExport}
-          onRefresh={fetchData}
-          onClose={() => {
-            setState({ visibleExport: false });
+            setState({ visibleRepair: false });
           }}
         />
         <ConfirmDelete
@@ -273,13 +224,11 @@ export default function ImportDevice() {
         />
         <ConfirmDelete
           visible={state.visibleAccessory}
-          // title="Ch"
-          content="Linh kiện sẽ được chuyển vào kho làm linh kiện thay thế sửa chữa. Thiết bị này sẽ được hiển thị trong linh kiện sửa chữa"
           onSubmit={() => {
             deviceService
               .update({ _id: state.accessoryId, status: 5 })
               .then((res) => {
-                fetchData(textSearch);
+                fetchData();
               });
           }}
           onClose={() => {

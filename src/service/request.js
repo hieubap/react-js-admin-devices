@@ -49,7 +49,9 @@ export const Method = {
 };
 export const getApiUrl = (origin) => {
   // const url = store.getState().application.HOST;
-  const domain = "http://14.225.205.222:8800";
+  const domain = window.location.origin.includes("14.225.205.222")
+    ? "http://14.225.205.222:8800"
+    : "http://localhost:8800";
 
   return domain + (origin ? "" : "/devices");
 };
@@ -103,7 +105,7 @@ export const requestData = async (
         : [url, data, { headers }])
     );
 
-    if (response.code === 200) {
+    if (response.code === 200 || response.code === 0) {
       return response.data;
     } else {
       return Promise.reject(response.message);

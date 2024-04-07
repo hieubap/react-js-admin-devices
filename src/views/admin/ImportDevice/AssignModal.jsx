@@ -78,7 +78,11 @@ export default function AssignModal({
   const onSubmit = (values, actions) => {
     const body = {
       deviceId: state.detail?._id,
-      ownerId: state.userSelected?._id,
+      // ownerId: state.userSelected?._id,
+      status: 2,
+      fullname: state.fullname,
+      phone: state.phone,
+      address: state.address,
     };
 
     deviceService
@@ -158,7 +162,6 @@ export default function AssignModal({
       },
     },
   ];
-  const inputBg = useColorModeValue("secondaryGray.300", "navy.900");
 
   return (
     <Modal isOpen={visible} onClose={handleClose}>
@@ -212,56 +215,36 @@ export default function AssignModal({
           </Grid>
 
           <Text fontSize={14} fontWeight={"600"}>
-            Nhân viên bàn giao
+            Thông tin khách hàng
           </Text>
-          <Flex justifyContent={"space-between"}>
-            <Text color={"#666"}>Họ tên: </Text>
-            <Text marginLeft={10}>{state.userSelected?.fullname}</Text>
-          </Flex>
-          <Flex justifyContent={"space-between"}>
-            <Text color={"#666"}>Mã nhân viên:</Text>
-            <Text marginLeft={10}>{state.userSelected?.code}</Text>
-          </Flex>
-          <Flex
-            justifyContent={"space-between"}
-            borderBottom={"1px solid #ddd"}
-            marginBottom={5}
-          >
-            <Text color={"#666"}>Số điện thoại: </Text>
-            <Text marginLeft={10}>{state.userSelected?.phone}</Text>
-          </Flex>
+          <Text color={"#666"}>Họ tên: </Text>
           <Input
-            variant="search"
-            fontSize="sm"
-            bg={inputBg}
-            // color={inputText}
-            fontWeight="500"
-            height={8}
-            mb={2}
-            mt={1}
             onChange={(e) => {
-              if (searchRef.current) {
-                clearTimeout(searchRef.current);
-              }
-              searchRef.current = setTimeout(() => {
-                fetchData(e.target?.value);
-              }, 500);
+              setState({ fullname: e.target.value });
             }}
-            _placeholder={{ color: "gray.400", fontSize: "14px" }}
-            borderRadius={"30px"}
-            placeholder={"Tìm tên hoặc mã NV"}
-          />
-          <TableView columns={columns} data={state.userList} />
+          ></Input>
+          <Text color={"#666"}>Số điện thoại:</Text>
+          <Input
+            onChange={(e) => {
+              setState({ phone: e.target.value });
+            }}
+          ></Input>
+          <Text color={"#666"}>Địa chỉ: </Text>
+          <Input
+            onChange={(e) => {
+              setState({ address: e.target.value });
+            }}
+          ></Input>
         </ModalBody>
         <ModalFooter>
           <Button
             colorScheme="blue"
-            isDisabled={!state.userSelected}
+            isDisabled={!state.phone}
             aria-label="edit"
             leftIcon={<MdCheckCircleOutline />}
             onClick={onSubmit}
           >
-            {"Bàn giao"}
+            {"Bán"}
           </Button>
           {/* <Button color={"blue"} type="submit" form="import-device"></Button> */}
         </ModalFooter>

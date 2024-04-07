@@ -21,6 +21,8 @@ import { Field, Formik } from "formik";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { MdCheckCircleOutline } from "react-icons/md";
+import SelectField from "@/components/FormField/SelectField";
+import typeDeviceService from "@/service/type-device-service";
 
 export default function DeviceForm({
   visible,
@@ -30,16 +32,28 @@ export default function DeviceForm({
 }) {
   const { state, setState } = useHookState({
     detail: {},
+    typeDeviceList: [],
   });
 
   useEffect(() => {
-    setState({
-      detail: data || {},
+    typeDeviceService.search({ size: 999 }).then((res) => {
+      setState({
+        typeDeviceList: res.data?.map((item) => ({
+          value: item._id,
+          label: item.typeName,
+        })),
+      });
     });
-  }, [data]);
+  }, []);
+
+  // useEffect(() => {
+  //   setState({
+  //     detail: data || {},
+  //   });
+  // }, [data]);
 
   const toast = useToast();
-  const isEdit = !!state.detail?._id;
+  const isEdit = !!data?._id;
 
   const onSubmit = (values, actions) => {
     if (!values.deviceName) {
@@ -55,12 +69,10 @@ export default function DeviceForm({
     }
     const body = {
       ...values,
+      status: isEdit ? undefined : 5,
     };
 
-    (state.detail?._id
-      ? deviceService.update(body)
-      : deviceService.create(body)
-    )
+    (isEdit ? deviceService.update(body) : deviceService.create(body))
       .then((res) => {
         console.log("res", res);
         toast({
@@ -94,7 +106,7 @@ export default function DeviceForm({
         <ModalHeader>{state.detail?._id ? "Cập nhật" : "Thêm mới"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Formik initialValues={state.detail} onSubmit={onSubmit}>
+          <Formik initialValues={data} onSubmit={onSubmit}>
             {({ handleSubmit }) => {
               return (
                 <form id="import-device" onSubmit={handleSubmit}>
@@ -153,25 +165,47 @@ export default function DeviceForm({
                     />
                   </FormControl>
                   <FormControl>
-                    <FormLabel htmlFor="song-language">Công nghệ</FormLabel>
-                    <Field
-                      id="song-language"
-                      name="tech"
-                      type="string"
-                      as={Input}
-                      variant="filled"
+                    <FormLabel htmlFor="type-device">Loại sản phẩm</FormLabel>
+                    <SelectField
+                      placeholder={"select ..."}
+                      // id={item.dataIndex}
+                      name={"typeId"}
+                      options={state.typeDeviceList}
+                      isMulti={false}
                     />
                   </FormControl>
                   <FormControl>
-                    <FormLabel htmlFor="song-language">Giá</FormLabel>
+                    <FormLabel htmlFor="price-buy">Giá nhập</FormLabel>
                     <Field
-                      id="song-language"
-                      name="price"
+                      id="price-buy"
+                      name="priceBuy"
                       type="number"
                       as={Input}
                       variant="filled"
                     />
                   </FormControl>
+                  <FormControl>
+                    <FormLabel htmlFor="price-sell">Giá bán</FormLabel>
+                    <Field
+                      id="price-sell"
+                      name="priceSell"
+                      type="number"
+                      as={Input}
+                      variant="filled"
+                    />
+                  </FormControl>
+                  {!isEdit && (
+                    <FormControl>
+                      <FormLabel htmlFor="number">Số lượng</FormLabel>
+                      <Field
+                        id="number"
+                        name="quantity"
+                        type="number"
+                        as={Input}
+                        variant="filled"
+                      />
+                    </FormControl>
+                  )}
                 </form>
               );
             }}

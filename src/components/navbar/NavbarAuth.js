@@ -444,7 +444,7 @@ export default function AuthNavbar(props) {
         background={navbarBg}
         boxShadow={navbarShadow}
         borderRadius='15px'
-        px='16px'
+        // px='16px'
         py='22px'
         mx='auto'
         width='1044px'
