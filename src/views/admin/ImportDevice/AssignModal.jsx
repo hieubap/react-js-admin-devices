@@ -167,7 +167,7 @@ export default function AssignModal({
     <Modal isOpen={visible} onClose={handleClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{"Bàn giao thiết bị"}</ModalHeader>
+        <ModalHeader>{"Bán thiết bị"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Grid templateColumns="repeat(4, 1fr)" style={{ marginBottom: 20 }}>

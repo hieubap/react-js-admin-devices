@@ -42,3 +42,13 @@ option {
   border-color: var(--chakra-colors-transparent);
   background: var(--chakra-colors-gray-100);
 }
+
+.chakra-input {
+  border: 1px solid #ddd !important;
+  /* margin-right: 5px; */
+  /* width: 98%; */
+}
+
+.chakra-form-control{
+  padding-right: 8px;
+}

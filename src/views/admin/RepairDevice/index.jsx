@@ -98,12 +98,12 @@ export default function RepairDevice() {
     // },
     {
       title: "Giá nhập",
-      dataIndex: "price",
+      dataIndex: "priceBuy",
       renderItem: (v) => formatPrice(v),
     },
     {
       title: "Giá bán",
-      dataIndex: "price",
+      dataIndex: "priceSell",
       renderItem: (v) => formatPrice(v),
     },
     {

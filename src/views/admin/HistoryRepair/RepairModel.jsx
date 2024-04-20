@@ -176,7 +176,7 @@ export default function RepairModal({
               },
               {
                 title: "Mã thiết bị",
-                dataIndex: "deviceCode",
+                dataIndex: "deviceCode",tg
               },
               {
                 title: "Hãng sản xuất",

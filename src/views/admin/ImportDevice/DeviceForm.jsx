@@ -15,6 +15,8 @@ import {
   Input,
   IconButton,
   useToast,
+  Grid,
+  GridItem,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { Field, Formik } from "formik";
@@ -101,7 +103,7 @@ export default function DeviceForm({
   return (
     <Modal isOpen={visible} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent style={{ maxWidth: "50vw" }}>
         <ModalHeader>{state.detail?._id ? "Cập nhật" : "Thêm mới"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
@@ -109,102 +111,131 @@ export default function DeviceForm({
             {({ handleSubmit }) => {
               return (
                 <form id="import-device" onSubmit={handleSubmit}>
-                  <FormControl>
-                    <FormLabel htmlFor="device-name">Tên thiết bị</FormLabel>
-                    <Field
-                      id="device-name"
-                      name="deviceName"
-                      type="string"
-                      as={Input}
-                      variant="filled"
-                    />
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel htmlFor="song-author">Hãng sản xuất</FormLabel>
-                    <Field
-                      id="song-author"
-                      name="manufacturer"
-                      type="string"
-                      as={Input}
-                      variant="filled"
-                    />
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel htmlFor="song-link-music">Màu sắc</FormLabel>
-                    <Field
-                      id="song-link-music"
-                      name="color"
-                      type="string"
-                      as={Input}
-                      variant="filled"
-                    />
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel htmlFor="song-link-image">
-                      Khối lượng (Kg)
-                    </FormLabel>
-                    <Field
-                      id="song-link-image"
-                      name="mass"
-                      type="number"
-                      as={Input}
-                      variant="filled"
-                    />
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel htmlFor="song-language">
-                      Kích thước (Inch)
-                    </FormLabel>
-                    <Field
-                      id="song-language"
-                      name="size"
-                      type="string"
-                      as={Input}
-                      variant="filled"
-                    />
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel htmlFor="type-device">Loại sản phẩm</FormLabel>
-                    <SelectField
-                      placeholder={"select ..."}
-                      // id={item.dataIndex}
-                      name={"typeId"}
-                      options={state.typeDeviceList}
-                      isMulti={false}
-                    />
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel htmlFor="price-buy">Giá nhập</FormLabel>
-                    <Field
-                      id="price-buy"
-                      name="priceBuy"
-                      type="number"
-                      as={Input}
-                      variant="filled"
-                    />
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel htmlFor="price-sell">Giá bán</FormLabel>
-                    <Field
-                      id="price-sell"
-                      name="priceSell"
-                      type="number"
-                      as={Input}
-                      variant="filled"
-                    />
-                  </FormControl>
-                  {!isEdit && (
-                    <FormControl>
-                      <FormLabel htmlFor="number">Số lượng</FormLabel>
-                      <Field
-                        id="number"
-                        name="quantity"
-                        type="number"
-                        as={Input}
-                        variant="filled"
-                      />
-                    </FormControl>
-                  )}
+                  <Grid
+                    templateColumns="repeat(2, 1fr)"
+                    style={{ marginBottom: 20 }}
+                  >
+                    <GridItem colSpan={1}>
+                      <FormControl>
+                        <FormLabel htmlFor="device-name">
+                          Tên thiết bị
+                        </FormLabel>
+                        <Field
+                          id="device-name"
+                          name="deviceName"
+                          type="string"
+                          as={Input}
+                          variant="filled"
+                        />
+                      </FormControl>
+                    </GridItem>
+                    <GridItem colSpan={1}>
+                      <FormControl>
+                        <FormLabel htmlFor="song-author">
+                          Hãng sản xuất
+                        </FormLabel>
+                        <Field
+                          id="song-author"
+                          name="manufacturer"
+                          type="string"
+                          as={Input}
+                          variant="filled"
+                        />
+                      </FormControl>
+                    </GridItem>
+                    <GridItem colSpan={1}>
+                      <FormControl>
+                        <FormLabel htmlFor="song-link-music">Màu sắc</FormLabel>
+                        <Field
+                          id="song-link-music"
+                          name="color"
+                          type="string"
+                          as={Input}
+                          variant="filled"
+                        />
+                      </FormControl>
+                    </GridItem>
+                    <GridItem colSpan={1}>
+                      <FormControl>
+                        <FormLabel htmlFor="song-link-image">
+                          Khối lượng (Kg)
+                        </FormLabel>
+                        <Field
+                          id="song-link-image"
+                          name="mass"
+                          type="number"
+                          as={Input}
+                          variant="filled"
+                        />
+                      </FormControl>
+                    </GridItem>
+                    <GridItem colSpan={1}>
+                      <FormControl>
+                        <FormLabel htmlFor="song-language">
+                          Kích thước (Inch)
+                        </FormLabel>
+                        <Field
+                          id="song-language"
+                          name="size"
+                          type="string"
+                          as={Input}
+                          variant="filled"
+                        />
+                      </FormControl>
+                    </GridItem>
+                    <GridItem colSpan={1}>
+                      <FormControl>
+                        <FormLabel htmlFor="type-device">
+                          Loại sản phẩm
+                        </FormLabel>
+                        <SelectField
+                          placeholder={"select ..."}
+                          // id={item.dataIndex}
+                          name={"typeId"}
+                          options={state.typeDeviceList}
+                          isMulti={false}
+                        />
+                      </FormControl>
+                    </GridItem>
+                    <GridItem colSpan={1}>
+                      <FormControl>
+                        <FormLabel htmlFor="price-buy">Giá nhập</FormLabel>
+                        <Field
+                          id="price-buy"
+                          name="priceBuy"
+                          type="number"
+                          as={Input}
+                          variant="filled"
+                        />
+                      </FormControl>
+                    </GridItem>
+                    <GridItem colSpan={1}>
+                      <FormControl>
+                        <FormLabel htmlFor="price-sell">Giá bán</FormLabel>
+                        <Field
+                          id="price-sell"
+                          name="priceSell"
+                          type="number"
+                          as={Input}
+                          variant="filled"
+                        />
+                      </FormControl>
+                    </GridItem>
+                    <GridItem colSpan={1}>
+                      {!isEdit && (
+                        <FormControl>
+                          <FormLabel htmlFor="number">Số lượng</FormLabel>
+                          <Field
+                            id="number"
+                            name="quantity"
+                            type="number"
+                            as={Input}
+                            variant="filled"
+                          />
+                        </FormControl>
+                      )}
+                    </GridItem>
+                  </Grid>
                 </form>
               );
             }}

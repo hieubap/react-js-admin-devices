@@ -217,7 +217,7 @@ export default function RepairModal({
   return (
     <Modal isOpen={visible} onClose={handleClose}>
       <ModalOverlay />
-      <ModalContent style={{ maxWidth: "80vw" }}>
+      <ModalContent style={{ maxWidth: "60vw" }}>
         <ModalHeader>{"Sửa chữa thiết bị"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
