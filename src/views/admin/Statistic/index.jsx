@@ -24,6 +24,7 @@ import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { MdAddCircleOutline, MdDelete, MdEdit } from "react-icons/md";
 import DeviceForm from "./DeviceForm";
 import moment from "moment";
+import LineChart from "@/components/charts/LineAreaChart";
 
 export default function StatisticDevice() {
   // Chakra Color Mode
@@ -161,21 +162,23 @@ export default function StatisticDevice() {
             >
               Loại thiết bị
             </Text>
-            <Spacer />
-            <HStack>
-              <Button
-                onClick={() => {
-                  setState({ visibleForm: true, editData: {} });
-                }}
-                leftIcon={<MdAddCircleOutline />}
-                variant="brand"
-                pr="15px"
-              >
-                Thêm mới
-              </Button>
-              <Menu />
-            </HStack>
           </Flex>
+          <LineChart
+            chartOptions={{
+              chart: {
+                id: "basic-bar",
+              },
+              xaxis: {
+                categories: Array.from(Array(30).keys()),
+              },
+            }}
+            chartData={[
+              {
+                name: "series-1",
+                data: [30, 40, 45, 50, 49, 60, 70, 91],
+              },
+            ]}
+          />
           <TableView columns={columns} data={state.typeList} />
           <Pagination
             currentPage={state.page + 1}

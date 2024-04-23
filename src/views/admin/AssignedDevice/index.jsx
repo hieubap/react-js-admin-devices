@@ -7,7 +7,7 @@ import {
   Tooltip,
   useColorModeValue,
 } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 // import MusicForm from "./components/MusicForm";
 import Card from "@/components/card/Card";
 import ConfirmDelete from "@/components/Modal/ConfirmDelete";
@@ -22,14 +22,15 @@ import { GiBrokenPottery } from "react-icons/gi";
 import { MdEditDocument } from "react-icons/md";
 import DeviceForm from "./DeviceForm";
 import { formatPrice } from "@/utils/index";
+import LineChart from "@/components/charts/LineAreaChart";
 
 export default function ExportDevice() {
   // Chakra Color Mode
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const { state, setState } = useHookState({
-    musicList: [],
+    deviceList: [],
     page: 0,
-    size: 10,
+    size: 999,
     totalElements: 0,
   });
 
@@ -130,7 +131,7 @@ export default function ExportDevice() {
       .then((res) => {
         console.log(res, "data???");
         setState({
-          musicList: res.data,
+          deviceList: res.data,
           page: res.pageNumber - 0,
           size: res.pageSize - 0,
           totalElements: res.totalElements,
@@ -155,9 +156,130 @@ export default function ExportDevice() {
     refreshData: fetchData,
   });
 
+  const [xAxis, totals, quantities, totalPrice] = useMemo(() => {
+    const startDate = moment().startOf("month");
+    const endDate = moment().endOf("month");
+    const numDate = endDate.diff(startDate, "day");
+    const dates = [];
+    const totals = [];
+    const quantities = [];
+    for (let i = 0; i < numDate; i++) {
+      const list = state.deviceList.filter(
+        (item) =>
+          moment(item.assignDate).format("YYYYMMDD") ==
+          startDate.format("YYYYMMDD")
+      );
+      console.log(list, "list");
+      dates.push(startDate.format("DD"));
+      totals.push(list.reduce((a, b) => a + b.priceSell, 0));
+      quantities.push(list.length);
+      startDate.add(1, "day");
+    }
+    return [
+      dates,
+      totals,
+      quantities,
+      state.deviceList.reduce((a, b) => a + b.priceSell, 0),
+    ];
+  }, [state.deviceList]);
+
   return (
     <>
       <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
+        <Card
+          direction="column"
+          w="100%"
+          px="0px"
+          overflowX={{ sm: "scroll", lg: "hidden" }}
+          mb={10}
+        >
+          <Flex px="25px" justify="space-between" mb="20px" align="center">
+            <Text
+              color={textColor}
+              fontSize="22px"
+              fontWeight="700"
+              lineHeight="100%"
+            >
+              Tổng thu: (Tháng {moment().format("MM")})
+            </Text>
+
+            <SearchBar
+              style={{ marginLeft: 20 }}
+              placeholder="Tìm theo tên"
+              onChange={onSearch}
+            />
+          </Flex>
+          <Flex px="25px">
+            <Text
+              color={textColor}
+              fontSize="20px"
+              fontWeight="500"
+              lineHeight="100%"
+            >
+              Tổng: {formatPrice(totalPrice)}
+            </Text>
+          </Flex>
+          <LineChart
+            chartOptions={{
+              chart: {
+                id: "basic-bar",
+              },
+              yaxis: {
+                labels: {
+                  formatter: function (value) {
+                    return formatPrice(value);
+                  },
+                },
+              },
+              xaxis: {
+                categories: xAxis,
+              },
+            }}
+            chartData={[
+              {
+                name: "Tổng:",
+                data: totals,
+              },
+            ]}
+            height={200}
+          />
+          <Flex px="25px" justify="space-between" mb="20px" align="center">
+            <Text
+              color={textColor}
+              fontSize="22px"
+              fontWeight="700"
+              lineHeight="100%"
+            >
+              Số lượng thiết bị đã bán: {state.deviceList?.length}
+            </Text>
+          </Flex>
+
+          <LineChart
+            chartOptions={{
+              chart: {
+                id: "basic-bar",
+              },
+              yaxis: {
+                labels: {
+                  formatter: function (value) {
+                    return value + " cái";
+                  },
+                },
+              },
+              xaxis: {
+                categories: xAxis,
+              },
+              colors: ["#04e396"],
+            }}
+            chartData={[
+              {
+                name: "Số lượng",
+                data: quantities,
+              },
+            ]}
+            height={200}
+          />
+        </Card>
         <Card
           direction="column"
           w="100%"
@@ -179,13 +301,13 @@ export default function ExportDevice() {
               onChange={onSearch}
             />
           </Flex>
-          <TableView columns={columns} data={state.musicList} />
-          <Pagination
+          <TableView columns={columns} data={state.deviceList} />
+          {/* <Pagination
             currentPage={state.page + 1}
             size={state.size}
             total={state.totalElements}
             onChangePage={onChangePage}
-          />
+          /> */}
         </Card>
         <DeviceForm
           data={state.editData}
