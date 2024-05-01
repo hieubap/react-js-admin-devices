@@ -51,7 +51,7 @@ export const getApiUrl = (origin) => {
   // const url = store.getState().application.HOST;
   const domain = window.location.origin.includes("14.225.205.222")
     ? "http://14.225.205.222:8800"
-    : "http://14.225.205.222:8800";
+    : "http://localhost:8800";
 
   return domain + (origin ? "" : "/devices");
 };
